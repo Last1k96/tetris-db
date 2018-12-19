@@ -11,12 +11,28 @@ namespace TetrisDb
     {
         public enum GameState
         {
-            New,
+            Empty,
+            StartNew,
             Play,
             Pause
         };
 
-        public GameState State { get; set; } = GameState.New;
+        public delegate void GameStateHandler(GameState currentGameState);
+        public event GameStateHandler OnGameStateChange;
+
+        private GameState state = GameState.Empty;
+        public GameState State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                state = value;
+                OnGameStateChange(value);
+            }
+        } 
 
         private readonly Color[] Colors =
         {
