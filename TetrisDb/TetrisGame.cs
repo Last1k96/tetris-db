@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Security.Cryptography.X509Certificates;
-using System.Windows.Forms;
 
 namespace TetrisDb
 {
     public class TetrisGame
     {
-        public const int width = 10;
-        public const int height = 20;
-
         public delegate void GameStateHandler(GameState currentGameState);
 
         public enum GameState
@@ -21,18 +16,10 @@ namespace TetrisDb
             Paused
         }
 
-        private readonly List<Tetromino> TetrominoList = new List<Tetromino>
-        {
-            new I(),
-            new J(),
-            new L(),
-            new O(),
-            new S(),
-            new T(),
-            new Z()
-        };
+        public const int Width = 10;
+        public const int Height = 20;
 
-        private readonly Color[] Colors =
+        public readonly Color[] Colors =
         {
             Color.Cyan,
             Color.Blue,
@@ -43,34 +30,56 @@ namespace TetrisDb
             Color.Red
         };
 
-        public int[,] Field = new int[width, height + 4];
-
-        public Tetromino CurrentTetromino = null;
-
-        private enum Move
+        private readonly List<Tetramino> TetrominoList = new List<Tetramino>
         {
-            Right,
-            Left,
-            Down,
-            Rotate,
-
+            new I(),
+            new J(),
+            new L(),
+            new O(),
+            new S(),
+            new T(),
+            new Z()
         };
 
-        private bool CanMove(Move dir)
+        public Tetramino CurrentTetramino;
+
+        public int[,] Field;
+
+        private GameState state = GameState.Empty;
+
+        public TetrisGame()
         {
-            var moved = CurrentTetromino;
+            Field = new int[Height + 4, Width];
+            for (var i = 0; i < Height + 4; i++)
+            for (var j = 0; j < Width; j++)
+                Field[i, j] = -1;
+        }
+
+        public GameState State
+        {
+            get => state;
+            set
+            {
+                state = value;
+                OnGameStateChange?.Invoke(value);
+            }
+        }
+
+        private Tetramino CanMove(Direction dir)
+        {
+            var moved = (Tetramino)CurrentTetramino.Clone();
             switch (dir)
             {
-                case Move.Right:
+                case Direction.Right:
                     moved.Position.X++;
                     break;
-                case Move.Left:
+                case Direction.Left:
                     moved.Position.X--;
                     break;
-                case Move.Down:
+                case Direction.Down:
                     moved.Position.Y--;
                     break;
-                case Move.Rotate:
+                case Direction.Rotate:
                     moved.Rotate();
                     break;
                 default:
@@ -79,69 +88,63 @@ namespace TetrisDb
 
             for (var y = 0; y < 4; y++)
             {
+                var my = moved.Position.Y - y;
                 for (var x = 0; x < 4; x++)
                 {
-                    if (moved.Block[y, x] != 0)
-                    {
-                        Point newPos = new Point(moved.Position.Y + y, moved.Position.X + x);
-                        if (Field[newPos.Y, newPos.X] != -1)
-                        {
-                            return false;
-                        }
-                    }
+                    var mx = moved.Position.X + x;
+                    if (moved.Block[y, x] == 0) continue;
+                    if (my < 0 || mx < 0 || mx > Width || Field[my, mx] != -1)
+                        return null;
                 }
             }
 
-            return true;
+            return moved;
+        }
+
+        public int CurrentTetraminoIndex()
+        {
+            return TetrominoList.FindIndex(t => t.GetType() == CurrentTetramino.GetType());
         }
 
         private void PlaceTetramino()
         {
-            var pos = CurrentTetromino.Position;
-            var block = CurrentTetromino.Block;
-            for (int y = 0; y < 4; y++)
-            {
-                for (int x = 0; x < 4; x++)
-                {
-                    if (CurrentTetromino.Block[])
-                    {
+            var pos = CurrentTetramino.Position;
+            var block = CurrentTetramino.Block;
+            var colorIndex = CurrentTetraminoIndex();
 
-                    }
+            for (var y = 0; y < 4; y++)
+            {
+                var my = pos.Y - y;
+                for (var x = 0; x < 4; x++)
+                {
+                    var mx = pos.X + x;
+                    if (my < 0 || mx < 0 || mx > Width || block[y, x] == 0) continue;
+                    Field[my, mx] = colorIndex;
                 }
             }
-            Field
         }
 
         public void OnGameTick()
         {
-            if (CurrentTetromino == null)
+            if (CurrentTetramino == null)
             {
-                CurrentTetromino = TetrominoList[new Random().Next() % TetrominoList.Count];
+                CurrentTetramino = TetrominoList[new Random().Next() % TetrominoList.Count];
                 return;
             }
 
-            if (CanMove(Move.Down))
-            {
-                CurrentTetromino.Position.Y--;
-            }
-            else
-            {
-                PlaceTetramino();
-            }
-        }
-
-        private GameState state = GameState.Empty;
-
-        public GameState State
-        {
-            get => state;
-            set
-            {
-                state = value;
-                OnGameStateChange(value);
-            }
+            var tetramino = CanMove(Direction.Down);
+            if (tetramino == null) PlaceTetramino();
+            CurrentTetramino = tetramino;
         }
 
         public event GameStateHandler OnGameStateChange;
+
+        private enum Direction
+        {
+            Right,
+            Left,
+            Down,
+            Rotate
+        }
     }
 }

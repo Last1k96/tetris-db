@@ -86,7 +86,48 @@ namespace TetrisDb
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
-            levelValue.Text = (Convert.ToInt32(levelValue.Text) + 1).ToString();
+            game.OnGameTick();
+            Redraw();
+        }
+
+        private void Redraw()
+        {
+            const int blockSize = 20;
+            var bitmap = new Bitmap(TetrisGame.Width * blockSize, TetrisGame.Height * blockSize);
+            var g = Graphics.FromImage(bitmap);
+            g.Clear(Color.Black);
+
+            // Draw Field
+            for (int y = 0; y < TetrisGame.Height; y++)
+            {
+                for (int x = 0; x < TetrisGame.Width; x++)
+                {
+                    var block = game.Field[y, x];
+                    if (block == -1) continue;
+                    var fieldX = x * blockSize;
+                    var fieldY = (TetrisGame.Height - y - 1) * blockSize;
+                    g.FillRectangle(new SolidBrush(game.Colors[block]), fieldX, fieldY, blockSize, blockSize);
+                }
+            }
+
+            // Draw moving peace
+            if (game.CurrentTetramino == null) return;
+            var pos = game.CurrentTetramino.Position;
+            var colorIndex = game.CurrentTetraminoIndex();
+            var brush = new SolidBrush(game.Colors[colorIndex]);
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    var block = game.CurrentTetramino.Block[y, x];
+                    if (block == 0) continue;
+                    var fieldX = (x + pos.X) * blockSize;
+                    var fieldY = (TetrisGame.Height + y - pos.Y - 1) * blockSize;
+                    g.FillRectangle(brush, fieldX, fieldY, blockSize, blockSize);
+                }
+            }
+
+            fieldPanel.CreateGraphics().DrawImage(bitmap, new Point(0, 0));
         }
     }
 }

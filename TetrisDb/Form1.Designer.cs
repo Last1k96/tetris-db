@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.mainPanel = new System.Windows.Forms.Panel();
-            this.figurePanel = new System.Windows.Forms.Panel();
             this.fieldPanel = new System.Windows.Forms.Panel();
+            this.figurePanel = new System.Windows.Forms.Panel();
             this.buttonsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.scoreButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
@@ -65,14 +65,6 @@
             this.mainPanel.Size = new System.Drawing.Size(373, 584);
             this.mainPanel.TabIndex = 1;
             // 
-            // figurePanel
-            // 
-            this.figurePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.figurePanel.Location = new System.Drawing.Point(3, 3);
-            this.figurePanel.Name = "figurePanel";
-            this.figurePanel.Size = new System.Drawing.Size(200, 131);
-            this.figurePanel.TabIndex = 0;
-            // 
             // fieldPanel
             // 
             this.fieldPanel.BackColor = System.Drawing.Color.Black;
@@ -81,6 +73,14 @@
             this.fieldPanel.Name = "fieldPanel";
             this.fieldPanel.Size = new System.Drawing.Size(333, 544);
             this.fieldPanel.TabIndex = 0;
+            // 
+            // figurePanel
+            // 
+            this.figurePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.figurePanel.Location = new System.Drawing.Point(3, 3);
+            this.figurePanel.Name = "figurePanel";
+            this.figurePanel.Size = new System.Drawing.Size(200, 131);
+            this.figurePanel.TabIndex = 0;
             // 
             // buttonsPanel
             // 
@@ -247,7 +247,7 @@
             // 
             // gameTimer
             // 
-            this.gameTimer.Interval = 500;
+            this.gameTimer.Interval = 150;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
             // Form1

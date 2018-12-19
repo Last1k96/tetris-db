@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace TetrisDb
 {
-    public abstract class Tetromino
+    public abstract class Tetramino : ICloneable
     {
         protected List<int[,]> BlockPositions;
         private int Rotation;
@@ -15,9 +16,14 @@ namespace TetrisDb
         {
             Rotation = (Rotation + 1) % 4;
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 
-    public class I : Tetromino
+    public class I : Tetramino
     {
         public I()
         {
@@ -56,7 +62,7 @@ namespace TetrisDb
             };
         }
     }
-    public class J : Tetromino
+    public class J : Tetramino
     {
         public J()
         {
@@ -95,7 +101,7 @@ namespace TetrisDb
             };
         }
     }
-    public class L : Tetromino
+    public class L : Tetramino
     {
         public L()
         {
@@ -134,11 +140,11 @@ namespace TetrisDb
             };
         }
     }
-    public class O : Tetromino
+    public class O : Tetramino
     {
         public O()
         {
-            Position = new Point(5, 21);
+            Position = new Point(5, 23);
 
             BlockPositions = new List<int[,]>
             {
@@ -173,7 +179,7 @@ namespace TetrisDb
             };
         }
     }
-    public class S : Tetromino
+    public class S : Tetramino
     {
         public S()
         {
@@ -212,7 +218,7 @@ namespace TetrisDb
             };
         }
     }
-    public class T : Tetromino
+    public class T : Tetramino
     {
         public T()
         {
@@ -251,7 +257,7 @@ namespace TetrisDb
             };
         }
     }
-    public class Z : Tetromino
+    public class Z : Tetramino
     {
         public Z()
         {
