@@ -67,6 +67,7 @@ namespace TetrisDb
 
         private Tetramino CanMove(Direction dir)
         {
+            if (CurrentTetramino == null) return null;
             var moved = (Tetramino)CurrentTetramino.Clone();
             switch (dir)
             {
@@ -93,7 +94,7 @@ namespace TetrisDb
                 {
                     var mx = moved.Position.X + x;
                     if (moved.Block[y, x] == 0) continue;
-                    if (my < 0 || mx < 0 || mx > Width || Field[my, mx] != -1)
+                    if (my < 0 || mx < 0 || mx >= Width || Field[my, mx] != -1)
                         return null;
                 }
             }
@@ -124,6 +125,16 @@ namespace TetrisDb
             }
         }
 
+        public void MoveCurrentTetramino(Direction dir)
+        {
+            var tetramino = CanMove(dir);
+            
+            if (tetramino != null)
+            {
+                CurrentTetramino = tetramino;
+            }
+        }
+
         public void OnGameTick()
         {
             if (CurrentTetramino == null)
@@ -139,7 +150,7 @@ namespace TetrisDb
 
         public event GameStateHandler OnGameStateChange;
 
-        private enum Direction
+        public enum Direction
         {
             Right,
             Left,

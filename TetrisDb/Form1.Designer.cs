@@ -62,7 +62,7 @@
             this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.Padding = new System.Windows.Forms.Padding(20);
-            this.mainPanel.Size = new System.Drawing.Size(373, 584);
+            this.mainPanel.Size = new System.Drawing.Size(340, 640);
             this.mainPanel.TabIndex = 1;
             // 
             // fieldPanel
@@ -71,8 +71,9 @@
             this.fieldPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fieldPanel.Location = new System.Drawing.Point(20, 20);
             this.fieldPanel.Name = "fieldPanel";
-            this.fieldPanel.Size = new System.Drawing.Size(333, 544);
+            this.fieldPanel.Size = new System.Drawing.Size(300, 600);
             this.fieldPanel.TabIndex = 0;
+            this.fieldPanel.Resize += new System.EventHandler(this.fieldPanel_Resize);
             // 
             // figurePanel
             // 
@@ -125,6 +126,7 @@
             this.startButton.Text = "Новая игра";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.startButton.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.startButton_PreviewKeyDown);
             // 
             // levelLabel
             // 
@@ -240,25 +242,27 @@
             this.flowLayoutPanel1.Controls.Add(this.buttonsPanel);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Right;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(373, 0);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(340, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(206, 584);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(206, 640);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // gameTimer
             // 
-            this.gameTimer.Interval = 150;
+            this.gameTimer.Interval = 400;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(579, 584);
+            this.ClientSize = new System.Drawing.Size(546, 640);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Тетрис";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.mainPanel.ResumeLayout(false);
             this.buttonsPanel.ResumeLayout(false);
             this.scorePanel.ResumeLayout(false);
