@@ -12,9 +12,15 @@ namespace TetrisDb
 {
     public partial class Form1 : Form
     {
+        public static TetrisGame game = new TetrisGame();
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            game.State = TetrisGame.GameState.Play;
         }
     }
 }
