@@ -18,7 +18,7 @@ namespace TetrisDb
         {
             switch (state)
             {
-                case TetrisGame.GameState.Pause:
+                case TetrisGame.GameState.Paused:
                     gameTimer.Stop();
                     break;
                 case TetrisGame.GameState.Empty:
@@ -26,7 +26,7 @@ namespace TetrisDb
                 case TetrisGame.GameState.StartNew:
                     gameTimer.Start();
                     break;
-                case TetrisGame.GameState.Play:
+                case TetrisGame.GameState.Playing:
                     gameTimer.Start();
                     break;
             }
@@ -43,11 +43,11 @@ namespace TetrisDb
                     pauseButton.Enabled = true;
                     pauseButton.Text = "Пауза";
                     break;
-                case TetrisGame.GameState.Play:
+                case TetrisGame.GameState.Playing:
                     pauseButton.Enabled = true;
                     pauseButton.Text = "Пауза";
                     break;
-                case TetrisGame.GameState.Pause:
+                case TetrisGame.GameState.Paused:
                     pauseButton.Enabled = true;
                     pauseButton.Text = "Продолжить";
                     break;
@@ -55,8 +55,6 @@ namespace TetrisDb
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
-
-
 
         public Form1()
         {
@@ -71,18 +69,18 @@ namespace TetrisDb
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            game.State = TetrisGame.GameState.Play;
+            game.State = TetrisGame.GameState.Playing;
         }
 
         private void pauseButton_Click(object sender, EventArgs e)
         {
-            if (game.State == TetrisGame.GameState.Play)
+            if (game.State == TetrisGame.GameState.Playing)
             {
-                game.State = TetrisGame.GameState.Pause;
+                game.State = TetrisGame.GameState.Paused;
             }
             else
             {
-                game.State = TetrisGame.GameState.Play;
+                game.State = TetrisGame.GameState.Playing;
             }
         }
 

@@ -7,7 +7,7 @@ namespace TetrisDb
     {
         protected List<int[,]> BlockPositions;
         private int Rotation;
-        public Point Position { get; protected set; }
+        public Point Position;
 
         public int[,] Block => BlockPositions[Rotation];
 
