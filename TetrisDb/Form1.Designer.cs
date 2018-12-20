@@ -32,6 +32,7 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.fieldPanel = new System.Windows.Forms.Panel();
             this.figurePanel = new System.Windows.Forms.Panel();
+            this.nextFigurePanel = new System.Windows.Forms.Panel();
             this.buttonsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.scoreButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
@@ -39,16 +40,13 @@
             this.levelLabel = new System.Windows.Forms.Label();
             this.pointsLabel = new System.Windows.Forms.Label();
             this.linesLabel = new System.Windows.Forms.Label();
-            this.timeLabel = new System.Windows.Forms.Label();
             this.levelValue = new System.Windows.Forms.Label();
             this.pointsValue = new System.Windows.Forms.Label();
             this.linesValue = new System.Windows.Forms.Label();
-            this.timeValue = new System.Windows.Forms.Label();
             this.scoreLabel = new System.Windows.Forms.Label();
             this.scorePanel = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
-            this.nextFigurePanel = new System.Windows.Forms.Panel();
             this.mainPanel.SuspendLayout();
             this.figurePanel.SuspendLayout();
             this.buttonsPanel.SuspendLayout();
@@ -86,13 +84,21 @@
             this.figurePanel.Size = new System.Drawing.Size(200, 131);
             this.figurePanel.TabIndex = 0;
             // 
+            // nextFigurePanel
+            // 
+            this.nextFigurePanel.BackColor = System.Drawing.SystemColors.Control;
+            this.nextFigurePanel.Location = new System.Drawing.Point(44, 3);
+            this.nextFigurePanel.Name = "nextFigurePanel";
+            this.nextFigurePanel.Size = new System.Drawing.Size(120, 120);
+            this.nextFigurePanel.TabIndex = 0;
+            // 
             // buttonsPanel
             // 
             this.buttonsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.buttonsPanel.Controls.Add(this.scoreButton);
             this.buttonsPanel.Controls.Add(this.pauseButton);
             this.buttonsPanel.Controls.Add(this.startButton);
-            this.buttonsPanel.Location = new System.Drawing.Point(3, 272);
+            this.buttonsPanel.Location = new System.Drawing.Point(3, 250);
             this.buttonsPanel.Name = "buttonsPanel";
             this.buttonsPanel.Padding = new System.Windows.Forms.Padding(8);
             this.buttonsPanel.Size = new System.Drawing.Size(200, 132);
@@ -161,16 +167,6 @@
             this.linesLabel.TabIndex = 4;
             this.linesLabel.Text = "Линий убрано";
             // 
-            // timeLabel
-            // 
-            this.timeLabel.AutoSize = true;
-            this.timeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.timeLabel.Location = new System.Drawing.Point(7, 92);
-            this.timeLabel.Name = "timeLabel";
-            this.timeLabel.Size = new System.Drawing.Size(58, 20);
-            this.timeLabel.TabIndex = 5;
-            this.timeLabel.Text = "Время";
-            // 
             // levelValue
             // 
             this.levelValue.AutoSize = true;
@@ -201,16 +197,6 @@
             this.linesValue.TabIndex = 8;
             this.linesValue.Text = "0";
             // 
-            // timeValue
-            // 
-            this.timeValue.AutoSize = true;
-            this.timeValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.timeValue.Location = new System.Drawing.Point(124, 92);
-            this.timeValue.Name = "timeValue";
-            this.timeValue.Size = new System.Drawing.Size(19, 20);
-            this.timeValue.TabIndex = 9;
-            this.timeValue.Text = "0";
-            // 
             // scoreLabel
             // 
             this.scoreLabel.AutoSize = true;
@@ -226,16 +212,14 @@
             this.scorePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.scorePanel.Controls.Add(this.scoreLabel);
             this.scorePanel.Controls.Add(this.levelLabel);
-            this.scorePanel.Controls.Add(this.timeValue);
             this.scorePanel.Controls.Add(this.pointsLabel);
             this.scorePanel.Controls.Add(this.linesValue);
             this.scorePanel.Controls.Add(this.linesLabel);
             this.scorePanel.Controls.Add(this.pointsValue);
-            this.scorePanel.Controls.Add(this.timeLabel);
             this.scorePanel.Controls.Add(this.levelValue);
             this.scorePanel.Location = new System.Drawing.Point(3, 140);
             this.scorePanel.Name = "scorePanel";
-            this.scorePanel.Size = new System.Drawing.Size(200, 126);
+            this.scorePanel.Size = new System.Drawing.Size(200, 104);
             this.scorePanel.TabIndex = 11;
             // 
             // flowLayoutPanel1
@@ -254,14 +238,6 @@
             // 
             this.gameTimer.Interval = 400;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
-            // 
-            // nextFigurePanel
-            // 
-            this.nextFigurePanel.BackColor = System.Drawing.SystemColors.Control;
-            this.nextFigurePanel.Location = new System.Drawing.Point(44, 3);
-            this.nextFigurePanel.Name = "nextFigurePanel";
-            this.nextFigurePanel.Size = new System.Drawing.Size(120, 120);
-            this.nextFigurePanel.TabIndex = 0;
             // 
             // Form1
             // 
@@ -288,12 +264,10 @@
         private System.Windows.Forms.Panel scorePanel;
         private System.Windows.Forms.Label scoreLabel;
         private System.Windows.Forms.Label levelLabel;
-        private System.Windows.Forms.Label timeValue;
         private System.Windows.Forms.Label pointsLabel;
         private System.Windows.Forms.Label linesValue;
         private System.Windows.Forms.Label linesLabel;
         private System.Windows.Forms.Label pointsValue;
-        private System.Windows.Forms.Label timeLabel;
         private System.Windows.Forms.Label levelValue;
         private System.Windows.Forms.FlowLayoutPanel buttonsPanel;
         private System.Windows.Forms.Button scoreButton;

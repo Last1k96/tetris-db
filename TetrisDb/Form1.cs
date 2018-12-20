@@ -6,8 +6,8 @@ namespace TetrisDb
 {
     public partial class Form1 : Form
     {
-        public static TetrisGame game;
         private const int BlockSize = 30;
+        public static TetrisGame game;
 
         public Form1()
         {
@@ -17,21 +17,50 @@ namespace TetrisDb
             game.OnGameStateChange += TimerHandler;
             game.OnGameStateChange += PauseButtonHandler;
             game.OnGameStateChange += FocusHandler;
-            game.OnGameStateChange += NextFigureOnStartHandler;
+            game.OnGameStateChange += OnStartHandler;
             game.OnFigurePlaced += NextFigureHandler;
             game.OnFigurePlaced += LineCollapseHandler;
 
             game.State = TetrisGame.GameState.Empty;
         }
 
-        private void NextFigureOnStartHandler(TetrisGame.GameState state)
+        private void LineCollapseHandler()
+        {
+            var collapsed = game.CollapseLines();
+            if (collapsed == 0) return;
+            var oldLines = Convert.ToInt32(linesValue.Text);
+            var newLines = oldLines + collapsed;
+            var oldPoints = Convert.ToInt32(pointsValue.Text);
+            var newPoints = oldPoints + TetrisGame.PointsForLineCollapsing[collapsed - 1];
+            var oldLevel = Convert.ToInt32(levelValue.Text);
+            var newLevel = newLines / 10 + 1;
+
+            if ((oldLevel != newLevel) && (newLevel <= 10))
+            {
+                gameTimer.Interval = ((11 - newLevel) * 50);
+                levelValue.Text = newLevel.ToString();
+            }
+
+            linesValue.Text = newLines.ToString();
+            pointsValue.Text = newPoints.ToString();
+
+            Redraw();
+            gameTimer.Stop();
+            gameTimer.Start(); // reset
+        }
+
+        private void OnStartHandler(TetrisGame.GameState state)
         {
             if (state == TetrisGame.GameState.StartNew)
             {
                 game.CycleTetramino();
                 NextFigureHandler();
+                levelValue.Text = "1";
+                pointsValue.Text = "0";
+                linesValue.Text = "0";
             }
         }
+
         private void NextFigureHandler()
         {
             var bitmap = new Bitmap(4 * BlockSize, 4 * BlockSize);
@@ -139,28 +168,28 @@ namespace TetrisDb
 
             // Draw Field
             for (var y = 0; y < TetrisGame.Height; y++)
-                for (var x = 0; x < TetrisGame.Width; x++)
-                {
-                    var block = game.Field[y, x];
-                    if (block == -1) continue;
-                    var fieldX = x * BlockSize;
-                    var fieldY = (TetrisGame.Height - y - 1) * BlockSize;
-                    DrawBlock(g, block, fieldX, fieldY, BlockSize);
-                }
+            for (var x = 0; x < TetrisGame.Width; x++)
+            {
+                var block = game.Field[y, x];
+                if (block == -1) continue;
+                var fieldX = x * BlockSize;
+                var fieldY = (TetrisGame.Height - y - 1) * BlockSize;
+                DrawBlock(g, block, fieldX, fieldY, BlockSize);
+            }
 
             // Draw moving peace
             if (game.CurrentTetramino == null) return;
             var pos = game.CurrentTetramino.Position;
             var colorIndex = game.TetraminoIndex(game.CurrentTetramino);
             for (var y = 0; y < 4; y++)
-                for (var x = 0; x < 4; x++)
-                {
-                    var block = game.CurrentTetramino.Block[y, x];
-                    if (block == 0) continue;
-                    var fieldX = (x + pos.X) * BlockSize;
-                    var fieldY = (TetrisGame.Height + y - pos.Y - 1) * BlockSize;
-                    DrawBlock(g, colorIndex, fieldX, fieldY, BlockSize);
-                }
+            for (var x = 0; x < 4; x++)
+            {
+                var block = game.CurrentTetramino.Block[y, x];
+                if (block == 0) continue;
+                var fieldX = (x + pos.X) * BlockSize;
+                var fieldY = (TetrisGame.Height + y - pos.Y - 1) * BlockSize;
+                DrawBlock(g, colorIndex, fieldX, fieldY, BlockSize);
+            }
 
             fieldPanel.CreateGraphics().DrawImage(bitmap, new Point(0, 0));
         }

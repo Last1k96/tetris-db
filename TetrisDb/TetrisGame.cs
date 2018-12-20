@@ -6,11 +6,14 @@ namespace TetrisDb
 {
     public class TetrisGame
     {
+        public static readonly int[] PointsForLineCollapsing = {40, 100, 300, 1200};
+
         public delegate void GameStateDelegate(GameState currentGameState);
 
         public delegate void FigurePlacedDelegate();
 
         public event FigurePlacedDelegate OnFigurePlaced;
+
         public enum GameState
         {
             Empty,
@@ -75,6 +78,37 @@ namespace TetrisDb
                 _state = value;
                 OnGameStateChange?.Invoke(value);
             }
+        }
+
+        public int CollapseLines()
+        {
+            var lineToCollapse = new List<int>();
+            for (int y = 0; y < Height; y++)
+            {
+                int x = 0;
+                for (; x < Width; x++)
+                {
+                    if (Field[y, x] == -1) break;
+                }
+
+                if (x == TetrisGame.Width)
+                {
+                    lineToCollapse.Add(y);
+                }
+            }
+
+            foreach (var line in lineToCollapse)
+            {
+                for (int i = line; i < Height; i++)
+                {
+                    for (int j = 0; j < Width; j++)
+                    {
+                        Field[i, j] = Field[i + 1, j];
+                    }
+                }
+            }
+
+            return lineToCollapse.Count;
         }
 
         private Tetramino CanMove(Direction dir)
@@ -154,7 +188,7 @@ namespace TetrisDb
 
         Tetramino GenerateTetramino()
         {
-            return (Tetramino)TetrominoList[new Random().Next() % TetrominoList.Count].Clone();
+            return (Tetramino) TetrominoList[new Random().Next() % TetrominoList.Count].Clone();
         }
 
         public void OnGameTick()
