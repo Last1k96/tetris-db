@@ -68,7 +68,7 @@ namespace TetrisDb
         private Tetramino CanMove(Direction dir)
         {
             if (CurrentTetramino == null) return null;
-            var moved = (Tetramino)CurrentTetramino.Clone();
+            var moved = (Tetramino) CurrentTetramino.Clone();
             switch (dir)
             {
                 case Direction.Right:
@@ -128,7 +128,7 @@ namespace TetrisDb
         public void MoveCurrentTetramino(Direction dir)
         {
             var tetramino = CanMove(dir);
-            
+
             if (tetramino != null)
             {
                 CurrentTetramino = tetramino;
@@ -144,7 +144,11 @@ namespace TetrisDb
             }
 
             var tetramino = CanMove(Direction.Down);
-            if (tetramino == null) PlaceTetramino();
+            if (tetramino == null)
+            {
+                PlaceTetramino();
+                tetramino = TetrominoList[new Random().Next() % TetrominoList.Count];
+            }
             CurrentTetramino = tetramino;
         }
 

@@ -27,7 +27,7 @@ namespace TetrisDb
     {
         public I()
         {
-            Position = new Point(5, 21);
+            Position = new Point(3, 20);
 
             BlockPositions = new List<int[,]>
             {
@@ -66,7 +66,7 @@ namespace TetrisDb
     {
         public J()
         {
-            Position = new Point(5, 21);
+            Position = new Point(3, 21);
 
             BlockPositions = new List<int[,]>
             {
@@ -105,7 +105,7 @@ namespace TetrisDb
     {
         public L()
         {
-            Position = new Point(5, 21);
+            Position = new Point(3, 21);
 
             BlockPositions = new List<int[,]>
             {
@@ -144,7 +144,7 @@ namespace TetrisDb
     {
         public O()
         {
-            Position = new Point(5, 23);
+            Position = new Point(4, 22);
 
             BlockPositions = new List<int[,]>
             {
@@ -183,7 +183,7 @@ namespace TetrisDb
     {
         public S()
         {
-            Position = new Point(5, 21);
+            Position = new Point(3, 21);
 
             BlockPositions = new List<int[,]>
             {
@@ -222,7 +222,7 @@ namespace TetrisDb
     {
         public T()
         {
-            Position = new Point(5, 21);
+            Position = new Point(3, 21);
 
             BlockPositions = new List<int[,]>
             {
@@ -261,7 +261,7 @@ namespace TetrisDb
     {
         public Z()
         {
-            Position = new Point(5, 21);
+            Position = new Point(3, 21);
 
             BlockPositions = new List<int[,]>
             {

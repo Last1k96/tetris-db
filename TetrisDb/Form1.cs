@@ -87,6 +87,19 @@ namespace TetrisDb
             Redraw();
         }
 
+        private void DrawBlock(Graphics g, int colorIndex, int x, int y, int size)
+        {
+            size--;
+            var color = game.Colors[colorIndex];
+            g.FillRectangle(new SolidBrush(color), x, y, size, size);
+            var lightPen = new Pen(ControlPaint.Light(color));
+            var darkPen = new Pen(ControlPaint.Dark(color));
+            g.DrawLine(lightPen, x, y, x + size, y);
+            g.DrawLine(lightPen, x, y, x, y + size);
+            g.DrawLine(darkPen, x + size, y, x + size, y + size);
+            g.DrawLine(darkPen, x, y + size, x + size, y + size);
+        }
+
         private void Redraw()
         {
             const int blockSize = 30;
@@ -96,29 +109,28 @@ namespace TetrisDb
 
             // Draw Field
             for (var y = 0; y < TetrisGame.Height; y++)
-            for (var x = 0; x < TetrisGame.Width; x++)
-            {
-                var block = game.Field[y, x];
-                if (block == -1) continue;
-                var fieldX = x * blockSize;
-                var fieldY = (TetrisGame.Height - y - 1) * blockSize;
-                g.FillRectangle(new SolidBrush(game.Colors[block]), fieldX, fieldY, blockSize, blockSize);
-            }
+                for (var x = 0; x < TetrisGame.Width; x++)
+                {
+                    var block = game.Field[y, x];
+                    if (block == -1) continue;
+                    var fieldX = x * blockSize;
+                    var fieldY = (TetrisGame.Height - y - 1) * blockSize;
+                    DrawBlock(g, block, fieldX, fieldY, blockSize);
+                }
 
             // Draw moving peace
             if (game.CurrentTetramino == null) return;
             var pos = game.CurrentTetramino.Position;
             var colorIndex = game.CurrentTetraminoIndex();
-            var brush = new SolidBrush(game.Colors[colorIndex]);
             for (var y = 0; y < 4; y++)
-            for (var x = 0; x < 4; x++)
-            {
-                var block = game.CurrentTetramino.Block[y, x];
-                if (block == 0) continue;
-                var fieldX = (x + pos.X) * blockSize;
-                var fieldY = (TetrisGame.Height + y - pos.Y - 1) * blockSize;
-                g.FillRectangle(brush, fieldX, fieldY, blockSize, blockSize);
-            }
+                for (var x = 0; x < 4; x++)
+                {
+                    var block = game.CurrentTetramino.Block[y, x];
+                    if (block == 0) continue;
+                    var fieldX = (x + pos.X) * blockSize;
+                    var fieldY = (TetrisGame.Height + y - pos.Y - 1) * blockSize;
+                    DrawBlock(g, colorIndex, fieldX, fieldY, blockSize);
+                }
 
             fieldPanel.CreateGraphics().DrawImage(bitmap, new Point(0, 0));
         }

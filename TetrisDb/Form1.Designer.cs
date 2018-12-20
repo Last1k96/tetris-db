@@ -48,7 +48,9 @@
             this.scorePanel = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
+            this.nextFigurePanel = new System.Windows.Forms.Panel();
             this.mainPanel.SuspendLayout();
+            this.figurePanel.SuspendLayout();
             this.buttonsPanel.SuspendLayout();
             this.scorePanel.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -78,6 +80,7 @@
             // figurePanel
             // 
             this.figurePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.figurePanel.Controls.Add(this.nextFigurePanel);
             this.figurePanel.Location = new System.Drawing.Point(3, 3);
             this.figurePanel.Name = "figurePanel";
             this.figurePanel.Size = new System.Drawing.Size(200, 131);
@@ -252,6 +255,14 @@
             this.gameTimer.Interval = 400;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
+            // nextFigurePanel
+            // 
+            this.nextFigurePanel.BackColor = System.Drawing.Color.Black;
+            this.nextFigurePanel.Location = new System.Drawing.Point(44, 3);
+            this.nextFigurePanel.Name = "nextFigurePanel";
+            this.nextFigurePanel.Size = new System.Drawing.Size(120, 120);
+            this.nextFigurePanel.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -264,6 +275,7 @@
             this.Text = "Тетрис";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.mainPanel.ResumeLayout(false);
+            this.figurePanel.ResumeLayout(false);
             this.buttonsPanel.ResumeLayout(false);
             this.scorePanel.ResumeLayout(false);
             this.scorePanel.PerformLayout();
@@ -292,6 +304,7 @@
         private System.Windows.Forms.Panel fieldPanel;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Timer gameTimer;
+        private System.Windows.Forms.Panel nextFigurePanel;
     }
 }
 
