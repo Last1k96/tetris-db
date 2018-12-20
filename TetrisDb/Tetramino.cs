@@ -7,14 +7,14 @@ namespace TetrisDb
     public abstract class Tetramino : ICloneable
     {
         protected List<int[,]> BlockPositions;
-        private int Rotation;
+        private int _rotation;
         public Point Position;
 
-        public int[,] Block => BlockPositions[Rotation];
+        public int[,] Block => BlockPositions[_rotation];
 
         public void Rotate()
         {
-            Rotation = (Rotation + 1) % 4;
+            _rotation = (_rotation + 1) % 4;
         }
 
         public object Clone()
@@ -27,7 +27,7 @@ namespace TetrisDb
     {
         public I()
         {
-            Position = new Point(3, 20);
+            Position = new Point(3, 21);
 
             BlockPositions = new List<int[,]>
             {

@@ -6,14 +6,25 @@ namespace TetrisDb
 {
     public class TetrisGame
     {
-        public delegate void GameStateHandler(GameState currentGameState);
+        public delegate void GameStateDelegate(GameState currentGameState);
 
+        public delegate void FigurePlacedDelegate();
+
+        public event FigurePlacedDelegate OnFigurePlaced;
         public enum GameState
         {
             Empty,
             StartNew,
             Playing,
             Paused
+        }
+
+        public Tetramino CycleTetramino()
+        {
+            var prev = CurrentTetramino;
+            CurrentTetramino = NextTetramino ?? GenerateTetramino();
+            NextTetramino = GenerateTetramino();
+            return prev;
         }
 
         public const int Width = 10;
@@ -42,10 +53,11 @@ namespace TetrisDb
         };
 
         public Tetramino CurrentTetramino;
+        public Tetramino NextTetramino;
 
         public int[,] Field;
 
-        private GameState state = GameState.Empty;
+        private GameState _state = GameState.Empty;
 
         public TetrisGame()
         {
@@ -57,10 +69,10 @@ namespace TetrisDb
 
         public GameState State
         {
-            get => state;
+            get => _state;
             set
             {
-                state = value;
+                _state = value;
                 OnGameStateChange?.Invoke(value);
             }
         }
@@ -102,16 +114,17 @@ namespace TetrisDb
             return moved;
         }
 
-        public int CurrentTetraminoIndex()
+        public int TetraminoIndex(Tetramino tetramino)
         {
-            return TetrominoList.FindIndex(t => t.GetType() == CurrentTetramino.GetType());
+            return TetrominoList.FindIndex(t => t.GetType() == tetramino.GetType());
         }
 
         private void PlaceTetramino()
         {
+            if (CurrentTetramino == null) return;
             var pos = CurrentTetramino.Position;
             var block = CurrentTetramino.Block;
-            var colorIndex = CurrentTetraminoIndex();
+            var colorIndex = TetraminoIndex(CurrentTetramino);
 
             for (var y = 0; y < 4; y++)
             {
@@ -123,6 +136,10 @@ namespace TetrisDb
                     Field[my, mx] = colorIndex;
                 }
             }
+
+            CurrentTetramino = NextTetramino;
+            NextTetramino = GenerateTetramino();
+            OnFigurePlaced?.Invoke();
         }
 
         public void MoveCurrentTetramino(Direction dir)
@@ -135,24 +152,25 @@ namespace TetrisDb
             }
         }
 
+        Tetramino GenerateTetramino()
+        {
+            return (Tetramino)TetrominoList[new Random().Next() % TetrominoList.Count].Clone();
+        }
+
         public void OnGameTick()
         {
-            if (CurrentTetramino == null)
-            {
-                CurrentTetramino = TetrominoList[new Random().Next() % TetrominoList.Count];
-                return;
-            }
-
             var tetramino = CanMove(Direction.Down);
             if (tetramino == null)
             {
                 PlaceTetramino();
-                tetramino = TetrominoList[new Random().Next() % TetrominoList.Count];
             }
-            CurrentTetramino = tetramino;
+            else
+            {
+                CurrentTetramino = tetramino;
+            }
         }
 
-        public event GameStateHandler OnGameStateChange;
+        public event GameStateDelegate OnGameStateChange;
 
         public enum Direction
         {

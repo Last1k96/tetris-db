@@ -257,7 +257,7 @@
             // 
             // nextFigurePanel
             // 
-            this.nextFigurePanel.BackColor = System.Drawing.Color.Black;
+            this.nextFigurePanel.BackColor = System.Drawing.SystemColors.Control;
             this.nextFigurePanel.Location = new System.Drawing.Point(44, 3);
             this.nextFigurePanel.Name = "nextFigurePanel";
             this.nextFigurePanel.Size = new System.Drawing.Size(120, 120);
