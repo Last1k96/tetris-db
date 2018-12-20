@@ -1,37 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms.VisualStyles;
 
 namespace TetrisDb
 {
     public class TetrisGame
     {
-        public static readonly int[] PointsForLineCollapsing = {40, 100, 300, 1200};
+        public delegate void FigurePlacedDelegate();
 
         public delegate void GameStateDelegate(GameState currentGameState);
 
-        public delegate void FigurePlacedDelegate();
-
-        public event FigurePlacedDelegate OnFigurePlaced;
+        public enum Direction
+        {
+            None,
+            Right,
+            Left,
+            Down,
+            Rotate,
+            DownFast
+        }
 
         public enum GameState
         {
             Empty,
             StartNew,
             Playing,
-            Paused
-        }
-
-        public Tetramino CycleTetramino()
-        {
-            var prev = CurrentTetramino;
-            CurrentTetramino = NextTetramino ?? GenerateTetramino();
-            NextTetramino = GenerateTetramino();
-            return prev;
+            Paused,
+            Finished
         }
 
         public const int Width = 10;
         public const int Height = 20;
+        public static readonly int[] PointsForLineCollapsing = {40, 100, 300, 1200};
 
         public readonly Color[] Colors =
         {
@@ -55,19 +56,16 @@ namespace TetrisDb
             new Z()
         };
 
+        private GameState _state = GameState.Empty;
+
         public Tetramino CurrentTetramino;
-        public Tetramino NextTetramino;
 
         public int[,] Field;
-
-        private GameState _state = GameState.Empty;
+        public Tetramino NextTetramino;
 
         public TetrisGame()
         {
-            Field = new int[Height + 4, Width];
-            for (var i = 0; i < Height + 4; i++)
-            for (var j = 0; j < Width; j++)
-                Field[i, j] = -1;
+            Clear();
         }
 
         public GameState State
@@ -80,43 +78,53 @@ namespace TetrisDb
             }
         }
 
+        public event FigurePlacedDelegate OnFigurePlaced;
+
+        public Tetramino CycleTetramino()
+        {
+            var prev = CurrentTetramino;
+            CurrentTetramino = NextTetramino ?? GenerateTetramino();
+            NextTetramino = GenerateTetramino();
+            return prev;
+        }
+
+        public void Clear()
+        {
+            Field = new int[Height + 4, Width];
+            for (var i = 0; i < Height + 4; i++)
+            for (var j = 0; j < Width; j++)
+                Field[i, j] = -1;
+        }
+
         public int CollapseLines()
         {
             var lineToCollapse = new List<int>();
-            for (int y = 0; y < Height; y++)
+            for (var y = 0; y < Height; y++)
             {
-                int x = 0;
+                var x = 0;
                 for (; x < Width; x++)
-                {
-                    if (Field[y, x] == -1) break;
-                }
+                    if (Field[y, x] == -1)
+                        break;
 
-                if (x == TetrisGame.Width)
-                {
-                    lineToCollapse.Add(y);
-                }
+                if (x == Width) lineToCollapse.Add(y);
             }
 
-            foreach (var line in lineToCollapse)
-            {
-                for (int i = line; i < Height; i++)
-                {
-                    for (int j = 0; j < Width; j++)
-                    {
-                        Field[i, j] = Field[i + 1, j];
-                    }
-                }
-            }
+            for (int line = lineToCollapse.Count-1; line >= 0; line--)
+                for (var i = lineToCollapse[line]; i < Height; i++)
+                for (var j = 0; j < Width; j++)
+                    Field[i, j] = Field[i + 1, j];
 
             return lineToCollapse.Count;
         }
-
+        
         private Tetramino CanMove(Direction dir)
         {
             if (CurrentTetramino == null) return null;
             var moved = (Tetramino) CurrentTetramino.Clone();
             switch (dir)
             {
+                case Direction.None:
+                    break;
                 case Direction.Right:
                     moved.Position.X++;
                     break;
@@ -129,6 +137,15 @@ namespace TetrisDb
                 case Direction.Rotate:
                     moved.Rotate();
                     break;
+                case Direction.DownFast:
+                    Tetramino down;
+                    do
+                    {
+                        down = CanMove(Direction.Down);
+                        CurrentTetramino = down ?? CurrentTetramino;
+                    } while (down != null);
+
+                    return CurrentTetramino;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dir), dir, null);
             }
@@ -176,17 +193,17 @@ namespace TetrisDb
             OnFigurePlaced?.Invoke();
         }
 
-        public void MoveCurrentTetramino(Direction dir)
+        public bool MoveCurrentTetramino(Direction dir)
         {
             var tetramino = CanMove(dir);
 
-            if (tetramino != null)
-            {
-                CurrentTetramino = tetramino;
-            }
+            if (tetramino == null) return false;
+            CurrentTetramino = tetramino;
+            return true;
+
         }
 
-        Tetramino GenerateTetramino()
+        private Tetramino GenerateTetramino()
         {
             return (Tetramino) TetrominoList[new Random().Next() % TetrominoList.Count].Clone();
         }
@@ -195,23 +212,11 @@ namespace TetrisDb
         {
             var tetramino = CanMove(Direction.Down);
             if (tetramino == null)
-            {
                 PlaceTetramino();
-            }
             else
-            {
                 CurrentTetramino = tetramino;
-            }
         }
 
         public event GameStateDelegate OnGameStateChange;
-
-        public enum Direction
-        {
-            Right,
-            Left,
-            Down,
-            Rotate
-        }
     }
 }

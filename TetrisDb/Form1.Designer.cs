@@ -81,7 +81,7 @@
             this.figurePanel.Controls.Add(this.nextFigurePanel);
             this.figurePanel.Location = new System.Drawing.Point(3, 3);
             this.figurePanel.Name = "figurePanel";
-            this.figurePanel.Size = new System.Drawing.Size(200, 131);
+            this.figurePanel.Size = new System.Drawing.Size(205, 131);
             this.figurePanel.TabIndex = 0;
             // 
             // nextFigurePanel
@@ -101,7 +101,7 @@
             this.buttonsPanel.Location = new System.Drawing.Point(3, 250);
             this.buttonsPanel.Name = "buttonsPanel";
             this.buttonsPanel.Padding = new System.Windows.Forms.Padding(8);
-            this.buttonsPanel.Size = new System.Drawing.Size(200, 132);
+            this.buttonsPanel.Size = new System.Drawing.Size(205, 132);
             this.buttonsPanel.TabIndex = 1;
             // 
             // scoreButton
@@ -109,9 +109,9 @@
             this.scoreButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.scoreButton.Location = new System.Drawing.Point(11, 11);
             this.scoreButton.Name = "scoreButton";
-            this.scoreButton.Size = new System.Drawing.Size(177, 33);
+            this.scoreButton.Size = new System.Drawing.Size(183, 33);
             this.scoreButton.TabIndex = 0;
-            this.scoreButton.Text = "Таблица резульатов";
+            this.scoreButton.Text = "Таблица результатов";
             this.scoreButton.UseVisualStyleBackColor = true;
             // 
             // pauseButton
@@ -119,7 +119,7 @@
             this.pauseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.pauseButton.Location = new System.Drawing.Point(11, 50);
             this.pauseButton.Name = "pauseButton";
-            this.pauseButton.Size = new System.Drawing.Size(177, 33);
+            this.pauseButton.Size = new System.Drawing.Size(183, 33);
             this.pauseButton.TabIndex = 1;
             this.pauseButton.Text = "Пауза";
             this.pauseButton.UseVisualStyleBackColor = true;
@@ -130,11 +130,12 @@
             this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.startButton.Location = new System.Drawing.Point(11, 89);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(177, 33);
+            this.startButton.Size = new System.Drawing.Size(183, 33);
             this.startButton.TabIndex = 2;
             this.startButton.Text = "Новая игра";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.startButton.KeyDown += new System.Windows.Forms.KeyEventHandler(this.startButton_KeyDown);
             this.startButton.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.startButton_PreviewKeyDown);
             // 
             // levelLabel
@@ -219,7 +220,7 @@
             this.scorePanel.Controls.Add(this.levelValue);
             this.scorePanel.Location = new System.Drawing.Point(3, 140);
             this.scorePanel.Name = "scorePanel";
-            this.scorePanel.Size = new System.Drawing.Size(200, 104);
+            this.scorePanel.Size = new System.Drawing.Size(205, 104);
             this.scorePanel.TabIndex = 11;
             // 
             // flowLayoutPanel1
@@ -231,7 +232,7 @@
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(340, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(206, 640);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(220, 640);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // gameTimer
@@ -243,7 +244,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(546, 640);
+            this.ClientSize = new System.Drawing.Size(560, 640);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.flowLayoutPanel1);
             this.KeyPreview = true;
