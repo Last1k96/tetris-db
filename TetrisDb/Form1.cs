@@ -29,30 +29,28 @@ namespace TetrisDb
             pauseButton.DisableSelect();
         }
 
+        private void UpdateScore()
+        {
+            gameTimer.Interval = (11 - Game.Score.Level) * 50;
+
+            levelValue.Text = Game.Score.Level.ToString();
+            linesValue.Text = Game.Score.Lines.ToString();
+            pointsValue.Text = Game.Score.Points.ToString();
+        }
+
         private void LineCollapseHandler()
         {
             var collapsed = Game.CollapseLines();
             if (collapsed == 0) return;
-            var oldLines = Convert.ToInt32(linesValue.Text);
-            var newLines = oldLines + collapsed;
-            var oldPoints = Convert.ToInt32(pointsValue.Text);
-            var newPoints = oldPoints + TetrisGame.PointsForLineCollapsing[collapsed - 1];
-            var oldLevel = Convert.ToInt32(levelValue.Text);
-            var newLevel = newLines / 10 + 1;
 
-            if (oldLevel != newLevel && newLevel <= 10)
-            {
-                gameTimer.Interval = (11 - newLevel) * 50;
-                levelValue.Text = newLevel.ToString();
-            }
-
-            linesValue.Text = newLines.ToString();
-            pointsValue.Text = newPoints.ToString();
-
+            UpdateScore();
+           
             Redraw();
             gameTimer.Stop();
             gameTimer.Start(); // reset
         }
+
+
 
         private void OnFinishHandler(TetrisGame.GameState state)
         {
@@ -65,11 +63,10 @@ namespace TetrisDb
             if (state != TetrisGame.GameState.StartNew) return;
             Game.Clear();
             Game.CycleTetramino();
+            Game.Score.Reset();
+
             NextFigureHandler();
-            levelValue.Text = "1";
-            pointsValue.Text = "0";
-            linesValue.Text = "0";
-            gameTimer.Interval = 500;
+            UpdateScore();
         }
 
         private void FinishHandler()
@@ -82,14 +79,14 @@ namespace TetrisDb
         {
             var pos = tetramino.Position;
             for (var y = 0; y < 4; y++)
-            for (var x = 0; x < 4; x++)
-            {
-                var block = tetramino.Block[y, x];
-                if (block == 0) continue;
-                var fieldX = (x + pos.X) * BlockSize;
-                var fieldY = (TetrisGame.Height + y - pos.Y - 1) * BlockSize;
-                DrawBlock(g, colorIndex, fieldX, fieldY, BlockSize);
-            }
+                for (var x = 0; x < 4; x++)
+                {
+                    var block = tetramino.Block[y, x];
+                    if (block == 0) continue;
+                    var fieldX = (x + pos.X) * BlockSize;
+                    var fieldY = (TetrisGame.Height + y - pos.Y - 1) * BlockSize;
+                    DrawBlock(g, colorIndex, fieldX, fieldY, BlockSize);
+                }
         }
 
         private void NextFigureHandler()
@@ -100,13 +97,13 @@ namespace TetrisDb
             g.Clear(SystemColors.Control);
             var colorIndex = Game.TetraminoIndex(Game.NextTetramino);
             for (var y = 0; y < 4; y++)
-            for (var x = 0; x < 4; x++)
-            {
-                if (Game.NextTetramino.Block[y, x] == 0) continue;
-                var fieldX = x * BlockSize;
-                var fieldY = y * BlockSize;
-                DrawBlock(g, colorIndex, fieldX, fieldY, BlockSize);
-            }
+                for (var x = 0; x < 4; x++)
+                {
+                    if (Game.NextTetramino.Block[y, x] == 0) continue;
+                    var fieldX = x * BlockSize;
+                    var fieldY = y * BlockSize;
+                    DrawBlock(g, colorIndex, fieldX, fieldY, BlockSize);
+                }
 
             nextFigurePicture.Image = bitmap;
         }
@@ -215,21 +212,21 @@ namespace TetrisDb
 
             // Draw Field
             for (var y = 0; y < TetrisGame.Height; y++)
-            for (var x = 0; x < TetrisGame.Width; x++)
-            {
-                var block = Game.Field[y, x];
-                if (block == -1) continue;
-                var fieldX = x * BlockSize;
-                var fieldY = (TetrisGame.Height - y - 1) * BlockSize;
-                DrawBlock(g, block, fieldX, fieldY, BlockSize);
-            }
+                for (var x = 0; x < TetrisGame.Width; x++)
+                {
+                    var block = Game.Field[y, x];
+                    if (block == -1) continue;
+                    var fieldX = x * BlockSize;
+                    var fieldY = (TetrisGame.Height - y - 1) * BlockSize;
+                    DrawBlock(g, block, fieldX, fieldY, BlockSize);
+                }
 
             if (Game.CurrentTetramino != null)
             {
                 // Draw shadow
                 var shadow = Game.GetShadow(Game.CurrentTetramino);
                 DrawTetramino(g, shadow, TetrisGame.ShadowColorIndex);
-                
+
                 // Draw moving peace
                 var colorIndex = Game.TetraminoIndex(Game.CurrentTetramino);
                 DrawTetramino(g, Game.CurrentTetramino, colorIndex);
@@ -280,11 +277,6 @@ namespace TetrisDb
             Redraw();
         }
 
-        private void startButton_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             Focus();
@@ -293,7 +285,7 @@ namespace TetrisDb
 
         private void scoreButton_Click(object sender, EventArgs e)
         {
-            
+
         }
     }
 }

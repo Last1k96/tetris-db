@@ -32,6 +32,7 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.fieldPicture = new System.Windows.Forms.PictureBox();
             this.figurePanel = new System.Windows.Forms.Panel();
+            this.nextFigurePicture = new System.Windows.Forms.PictureBox();
             this.buttonsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.scoreButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
@@ -46,14 +47,13 @@
             this.scorePanel = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
-            this.nextFigurePicture = new System.Windows.Forms.PictureBox();
             this.mainPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fieldPicture)).BeginInit();
             this.figurePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nextFigurePicture)).BeginInit();
             this.buttonsPanel.SuspendLayout();
             this.scorePanel.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nextFigurePicture)).BeginInit();
             this.SuspendLayout();
             // 
             // mainPanel
@@ -84,6 +84,14 @@
             this.figurePanel.Name = "figurePanel";
             this.figurePanel.Size = new System.Drawing.Size(205, 131);
             this.figurePanel.TabIndex = 0;
+            // 
+            // nextFigurePicture
+            // 
+            this.nextFigurePicture.Location = new System.Drawing.Point(41, 3);
+            this.nextFigurePicture.Name = "nextFigurePicture";
+            this.nextFigurePicture.Size = new System.Drawing.Size(120, 120);
+            this.nextFigurePicture.TabIndex = 0;
+            this.nextFigurePicture.TabStop = false;
             // 
             // buttonsPanel
             // 
@@ -129,7 +137,6 @@
             this.startButton.Text = "Новая игра";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
-            this.startButton.KeyDown += new System.Windows.Forms.KeyEventHandler(this.startButton_KeyDown);
             // 
             // levelLabel
             // 
@@ -233,14 +240,6 @@
             this.gameTimer.Interval = 400;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
-            // nextFigurePicture
-            // 
-            this.nextFigurePicture.Location = new System.Drawing.Point(41, 3);
-            this.nextFigurePicture.Name = "nextFigurePicture";
-            this.nextFigurePicture.Size = new System.Drawing.Size(120, 120);
-            this.nextFigurePicture.TabIndex = 0;
-            this.nextFigurePicture.TabStop = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -258,11 +257,11 @@
             this.mainPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fieldPicture)).EndInit();
             this.figurePanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nextFigurePicture)).EndInit();
             this.buttonsPanel.ResumeLayout(false);
             this.scorePanel.ResumeLayout(false);
             this.scorePanel.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nextFigurePicture)).EndInit();
             this.ResumeLayout(false);
 
         }

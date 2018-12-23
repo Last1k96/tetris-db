@@ -1,10 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Net;
 
 namespace TetrisDb
 {
+    public class Score
+    {
+        public int Level { get; private set; }
+        public int Lines { get; private set; }
+        public int Points { get; private set; }
+
+        public void Update(int linesCount)
+        {
+            if (linesCount <= 0 || linesCount > 4) return;
+            int[] pointsForLineCollapsing = { 40, 100, 300, 1200 };
+            Lines += linesCount;
+            Level = Lines / 10 + 1;
+            if (Level > 10) Level = 10;
+            Points += pointsForLineCollapsing[linesCount - 1];
+        }
+
+        public void Reset()
+        {
+            Level = 1;
+            Lines = 0;
+            Points = 0;
+        }
+    }
+
     public class TetrisGame
     {
         public delegate void FigurePlacedDelegate();
@@ -32,7 +55,7 @@ namespace TetrisDb
         public const int Width = 10;
         public const int Height = 20;
         public static int ShadowColorIndex = 7;
-        public static readonly int[] PointsForLineCollapsing = {40, 100, 300, 1200};
+        public Score Score = new Score();
 
         private readonly List<Tetramino> _tetraminoList = new List<Tetramino>
         {
@@ -66,6 +89,7 @@ namespace TetrisDb
         public TetrisGame()
         {
             Clear();
+
         }
 
         public GameState State
@@ -99,6 +123,8 @@ namespace TetrisDb
         public int CollapseLines()
         {
             var lineToCollapse = new List<int>();
+            
+            // Count lines to collapse
             for (var y = 0; y < Height; y++)
             {
                 var x = 0;
@@ -109,10 +135,13 @@ namespace TetrisDb
                 if (x == Width) lineToCollapse.Add(y);
             }
 
+            // Collapsing lines
             for (var line = lineToCollapse.Count - 1; line >= 0; line--)
             for (var i = lineToCollapse[line]; i < Height; i++)
             for (var j = 0; j < Width; j++)
                 Field[i, j] = Field[i + 1, j];
+
+            Score.Update(lineToCollapse.Count);
 
             return lineToCollapse.Count;
         }
