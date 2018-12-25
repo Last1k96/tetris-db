@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace TetrisDb
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private const int BlockSize = 30;
         public static TetrisGame Game;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
@@ -55,7 +56,9 @@ namespace TetrisDb
         private void OnFinishHandler(TetrisGame.GameState state)
         {
             if (state != TetrisGame.GameState.Finished) return;
-            // Add score to DB TODO
+            
+            var form = new AskNameForm();
+            form.ShowDialog(this);
         }
 
         private void OnStartHandler(TetrisGame.GameState state)
@@ -281,11 +284,17 @@ namespace TetrisDb
         {
             Focus();
             Redraw();
+
+            Database.SetInitializer(
+                new DropCreateDatabaseIfModelChanges<TetrisContext>());
         }
 
         private void scoreButton_Click(object sender, EventArgs e)
         {
+            using (var db = new TetrisContext())
+            {
 
+            }
         }
     }
 }
