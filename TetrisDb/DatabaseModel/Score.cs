@@ -8,7 +8,7 @@ namespace TetrisDb
 {
     public class Score
     {
-        public int ScoreId { get; set; }
+        public int Id { get; set; }
         public int Level { get; private set; }
         public int Lines { get; private set; }
         public int Points { get; private set; }

@@ -255,9 +255,13 @@ namespace TetrisDb
 
         public void OnGameTick()
         {
+            if (State != GameState.Playing && State != GameState.StartNew) return;
+
             var tetramino = CanMove(CurrentTetramino, Direction.Down);
             if (tetramino == null)
+            {
                 PlaceTetramino(CurrentTetramino);
+            }
             else
                 CurrentTetramino = tetramino;
         }

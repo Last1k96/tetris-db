@@ -44,6 +44,8 @@ namespace TetrisDb
             {
                 okButton_Click(sender, e);
             }
+
+            e.Handled = true;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
