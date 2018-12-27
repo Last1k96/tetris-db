@@ -10,11 +10,14 @@ using System.Windows.Forms;
 
 namespace TetrisDb
 {
-    public partial class StatsForm : Form
+    public partial class ScoreForm : Form
     {
-        public StatsForm()
+        public ScoreForm()
         {
             InitializeComponent();
+
+            button1.DisableSelect();
+            button2.DisableSelect();
         }
 
         private void UpdateList()
@@ -58,6 +61,14 @@ namespace TetrisDb
         private void StatsForm_Load(object sender, EventArgs e)
         {
             UpdateList();
+        }
+
+        private void StatsForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
+            }
         }
     }
 }

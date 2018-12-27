@@ -238,12 +238,15 @@ namespace TetrisDb
             fieldPicture.BackgroundImage = bitmap;
         }
 
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
                 case Keys.F2:
                     startButton_Click(sender, e);
+                    break;
+                case Keys.F3:
+                    scoreButton_Click(sender, e);
                     break;
                 case Keys.Escape:
                     pauseButton_Click(sender, e);
@@ -280,7 +283,7 @@ namespace TetrisDb
             Redraw();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             Focus();
             Redraw();
@@ -288,8 +291,16 @@ namespace TetrisDb
 
         private void scoreButton_Click(object sender, EventArgs e)
         {
-            var form = new StatsForm();
+            var form = new ScoreForm();
             form.ShowDialog(this);
+        }
+
+        private void MainForm_Leave(object sender, EventArgs e)
+        {
+            if (Game.State == TetrisGame.GameState.Playing)
+            {
+                pauseButton_Click(sender, e);
+            }
         }
     }
 }

@@ -15,6 +15,9 @@ namespace TetrisDb
         public AskNameForm()
         {
             InitializeComponent();
+
+            okButton.DisableSelect();
+            cancelButton.DisableSelect();
         }
 
         private void okButton_Click(object sender, EventArgs e)
@@ -40,9 +43,14 @@ namespace TetrisDb
 
         private void nameBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            switch (e.KeyCode)
             {
-                okButton_Click(sender, e);
+                case Keys.Enter:
+                    okButton_Click(sender, e);
+                    break;
+                case Keys.Escape:
+                    this.Close();
+                    break;
             }
 
             e.Handled = true;

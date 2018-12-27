@@ -1,6 +1,6 @@
 ﻿namespace TetrisDb
 {
-    partial class StatsForm
+    partial class ScoreForm
     {
         /// <summary>
         /// Required designer variable.
@@ -86,6 +86,7 @@
             this.scoreListView.TabIndex = 2;
             this.scoreListView.UseCompatibleStateImageBehavior = false;
             this.scoreListView.View = System.Windows.Forms.View.Details;
+            this.scoreListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StatsForm_KeyDown);
             // 
             // name
             // 
@@ -106,16 +107,18 @@
             this.points.Text = "Очки";
             this.points.Width = 96;
             // 
-            // StatsForm
+            // ScoreForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(418, 346);
             this.Controls.Add(this.scoreListView);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Name = "StatsForm";
+            this.Name = "ScoreForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Stats";
             this.Load += new System.EventHandler(this.StatsForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StatsForm_KeyDown);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
