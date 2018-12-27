@@ -13,7 +13,7 @@ namespace TetrisDb
         public int Lines { get; private set; }
         public int Points { get; private set; }
 
-        public Player Player { get; set; }
+        public virtual Player Player { get; set; }
 
         public void Update(int linesCount)
         {

@@ -284,17 +284,12 @@ namespace TetrisDb
         {
             Focus();
             Redraw();
-
-            Database.SetInitializer(
-                new DropCreateDatabaseIfModelChanges<TetrisContext>());
         }
 
         private void scoreButton_Click(object sender, EventArgs e)
         {
-            using (var db = new TetrisContext())
-            {
-
-            }
+            var form = new StatsForm();
+            form.ShowDialog(this);
         }
     }
 }
