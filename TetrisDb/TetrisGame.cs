@@ -4,35 +4,26 @@ using System.Drawing;
 
 namespace TetrisDb
 {
-
     public class TetrisGame
     {
         public delegate void FigurePlacedDelegate();
-        public delegate void GameStateDelegate(GameState currentGameState);
-        
+
+        public delegate void LineCollapsedDelegate(int count);
+
+        public delegate void FinishDelegate();
+
         public enum Direction
         {
             None,
             Right,
             Left,
             Down,
-            Rotate,
-            DownFast
+            Rotate
         }
 
-        public enum GameState
-        {
-            Empty,
-            StartNew,
-            Playing,
-            Paused,
-            Finished
-        }
-
-        public const int Width = 10;
-        public const int Height = 20;
-        public static int ShadowColorIndex = 7;
-        public Score Score = new Score();
+        public static readonly int Width = 10;
+        public static readonly int Height = 20;
+        public static readonly int ShadowColorIndex = 7;
 
         private readonly List<Tetramino> _tetraminoList = new List<Tetramino>
         {
@@ -57,35 +48,45 @@ namespace TetrisDb
             Color.FromArgb(255, 40, 40, 40) // Shadow
         };
 
-        private GameState _state = GameState.Empty;
-
-        public Tetramino CurrentTetramino;
-        public int[,] Field;
-        public Tetramino NextTetramino;
-
         public TetrisGame()
         {
             Clear();
         }
 
-        public GameState State
-        {
-            get => _state;
-            set
-            {
-                _state = value;
-                OnGameStateChange?.Invoke(value);
-            }
-        }
+        public Score Score { get; } = new Score();
+        public Tetramino CurrentTetramino { get; private set; }
+        public Tetramino NextTetramino { get; private set; }
+        public int[,] Field { get; private set; }
 
         public event FigurePlacedDelegate OnFigurePlaced;
+        public event LineCollapsedDelegate OnLineCollapsed;
+        public event FinishDelegate OnFinish;
 
-        public Tetramino CycleTetramino()
+        private void UpdateScore(int linesCount)
         {
-            var prev = CurrentTetramino;
+            if (linesCount <= 0 || linesCount > 4) return;
+            int[] pointsForLineCollapsing = { 40, 100, 300, 1200 };
+            Score.Lines += linesCount;
+            Score.Level = Score.Lines / 10 + 1;
+            if (Score.Level > 10) Score.Level = 10;
+            Score.Points += pointsForLineCollapsing[linesCount - 1];
+        }
+
+        private void ResetScore()
+        {
+            Score.Level = 1;
+            Score.Lines = 0;
+            Score.Points = 0;
+        }
+
+        private void CycleTetramino()
+        {
             CurrentTetramino = NextTetramino ?? GenerateTetramino();
             NextTetramino = GenerateTetramino();
-            return prev;
+            if (Move(CurrentTetramino, Direction.None) == null)
+            {
+                OnFinish?.Invoke();
+            }
         }
 
         public void Clear()
@@ -94,12 +95,14 @@ namespace TetrisDb
             for (var i = 0; i < Height + 4; i++)
             for (var j = 0; j < Width; j++)
                 Field[i, j] = -1;
+            CycleTetramino();
+            ResetScore();
         }
 
-        public int CollapseLines()
+        private void CollapseLines()
         {
             var lineToCollapse = new List<int>();
-            
+
             // Count lines to collapse
             for (var y = 0; y < Height; y++)
             {
@@ -117,35 +120,29 @@ namespace TetrisDb
             for (var j = 0; j < Width; j++)
                 Field[i, j] = Field[i + 1, j];
 
-            Score.Update(lineToCollapse.Count);
+            UpdateScore(lineToCollapse.Count);
 
-            return lineToCollapse.Count;
+            OnLineCollapsed?.Invoke(lineToCollapse.Count);
         }
 
-        public Tetramino GetShadow(Tetramino tetramino)
+        public Tetramino DropDown(Tetramino tetramino)
         {
-            bool CanMoveDown(Tetramino t)
+            Tetramino down;
+            do
             {
-                for (var y = 0; y < 4; y++)
-                {
-                    var my = t.Position.Y - y - 1;
-                    for (var x = 0; x < 4; x++)
-                    {
-                        var mx = t.Position.X + x;
-                        if (t.Block[y, x] == 0) continue;
-                        if (my < 0 || mx < 0 || mx >= Width || Field[my, mx] != -1) return false;
-                    }
-                }
+                down = Move(tetramino, Direction.Down);
+                tetramino = down ?? tetramino;
+            } while (down != null);
 
-                return true;
-            }
-
-            var shadow = (Tetramino) tetramino.Clone();
-            while (CanMoveDown(shadow)) shadow.Position.Y--;
-            return shadow;
+            return tetramino;
         }
 
-        private Tetramino CanMove(Tetramino tetramino, Direction dir)
+        public void DropDownCurrentTetramino()
+        {
+            CurrentTetramino = DropDown(CurrentTetramino);
+        }
+
+        private Tetramino Move(Tetramino tetramino, Direction dir)
         {
             if (tetramino == null) return null;
             var moved = (Tetramino) tetramino.Clone();
@@ -165,15 +162,6 @@ namespace TetrisDb
                 case Direction.Rotate:
                     moved.Rotate();
                     break;
-                case Direction.DownFast:
-                    Tetramino down;
-                    do
-                    {
-                        down = CanMove(moved, Direction.Down);
-                        moved = down ?? moved;
-                    } while (down != null);
-
-                    return moved;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dir), dir, null);
             }
@@ -191,11 +179,6 @@ namespace TetrisDb
             }
 
             return moved;
-        }
-
-        public bool CanSpawnNext()
-        {
-            return CanMove(NextTetramino, Direction.None) != null;
         }
 
         public int TetraminoIndex(Tetramino tetramino)
@@ -221,24 +204,27 @@ namespace TetrisDb
                 }
             }
 
+            CollapseLines();
+            CycleTetramino();
+
             OnFigurePlaced?.Invoke();
         }
 
         public bool MoveCurrentTetramino(Direction dir)
         {
-            var tetramino = CanMove(CurrentTetramino, dir);
+            var tetramino = Move(CurrentTetramino, dir);
 
             if (tetramino == null && dir == Direction.Rotate)
             {
                 // try bump left
-                tetramino = CanMove(CurrentTetramino, Direction.Left);
-                if (tetramino != null) tetramino = CanMove(tetramino, Direction.Rotate);
+                tetramino = Move(CurrentTetramino, Direction.Left);
+                if (tetramino != null) tetramino = Move(tetramino, Direction.Rotate);
 
                 // try bump right
                 if (tetramino == null)
                 {
-                    tetramino = CanMove(CurrentTetramino, Direction.Right);
-                    if (tetramino != null) tetramino = CanMove(tetramino, Direction.Rotate);
+                    tetramino = Move(CurrentTetramino, Direction.Right);
+                    if (tetramino != null) tetramino = Move(tetramino, Direction.Rotate);
                 }
             }
 
@@ -253,19 +239,14 @@ namespace TetrisDb
             return (Tetramino) _tetraminoList[new Random().Next() % _tetraminoList.Count].Clone();
         }
 
-        public void OnGameTick()
+        public void NextTick()
         {
-            if (State != GameState.Playing && State != GameState.StartNew) return;
-
-            var tetramino = CanMove(CurrentTetramino, Direction.Down);
+            var tetramino = Move(CurrentTetramino, Direction.Down);
             if (tetramino == null)
-            {
                 PlaceTetramino(CurrentTetramino);
-            }
             else
                 CurrentTetramino = tetramino;
         }
-
-        public event GameStateDelegate OnGameStateChange;
+        
     }
 }

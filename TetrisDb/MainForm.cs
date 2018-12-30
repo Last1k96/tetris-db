@@ -10,72 +10,71 @@ namespace TetrisDb
         private const int BlockSize = 30;
         public static TetrisGame Game;
 
+        public enum GameState
+        {
+            Playing,
+            Paused,
+            Finished
+        }
+
+        public delegate void GameStateDelegate(GameState currentGameState);
+        public event GameStateDelegate OnGameStateChange;
+        private GameState _state = GameState.Finished;
+        public GameState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                OnGameStateChange?.Invoke(value);
+            }
+        }
+
         public MainForm()
         {
             InitializeComponent();
 
             Game = new TetrisGame();
 
-            Game.OnGameStateChange += TimerHandler;
-            Game.OnGameStateChange += PauseButtonHandler;
-            Game.OnGameStateChange += OnStartHandler;
-            Game.OnGameStateChange += OnFinishHandler;
-
-            Game.OnFigurePlaced += LineCollapseHandler;
             Game.OnFigurePlaced += NextFigureHandler;
-            Game.OnFigurePlaced += FinishHandler;
+            Game.OnLineCollapsed += UpdateScore;
+            Game.OnFinish += FinishHandler;
 
             startButton.DisableSelect();
             scoreButton.DisableSelect();
             pauseButton.DisableSelect();
         }
 
-        private void UpdateScore()
+        private void UpdateScore(int count = 0)
         {
-            gameTimer.Interval = (11 - Game.Score.Level) * 50;
-
             levelValue.Text = Game.Score.Level.ToString();
             linesValue.Text = Game.Score.Lines.ToString();
             pointsValue.Text = Game.Score.Points.ToString();
+            gameTimer.Interval = (11 - Game.Score.Level) * 50;
+
+            if (gameTimer.Enabled)
+            {
+                gameTimer.Stop();
+                gameTimer.Start(); // reset
+            }
         }
 
-        private void LineCollapseHandler()
+        private void Start()
         {
-            var collapsed = Game.CollapseLines();
-            if (collapsed == 0) return;
-
-            UpdateScore();
-           
-            Redraw();
-            gameTimer.Stop();
-            gameTimer.Start(); // reset
-        }
-
-
-
-        private void OnFinishHandler(TetrisGame.GameState state)
-        {
-            if (state != TetrisGame.GameState.Finished) return;
-            
-            var form = new AskNameForm();
-            form.ShowDialog(this);
-        }
-
-        private void OnStartHandler(TetrisGame.GameState state)
-        {
-            if (state != TetrisGame.GameState.StartNew) return;
+            State = GameState.Playing;
+            pauseButton.Enabled = true;
             Game.Clear();
-            Game.CycleTetramino();
-            Game.Score.Reset();
-
             NextFigureHandler();
             UpdateScore();
+            gameTimer.Start();
         }
 
         private void FinishHandler()
         {
-            if (Game.CanSpawnNext() == false)
-                Game.State = TetrisGame.GameState.Finished;
+            State = GameState.Finished;
+            gameTimer.Stop();
+            var form = new AskNameForm();
+            form.ShowDialog(this);
         }
 
         private void DrawTetramino(Graphics g, Tetramino tetramino, int colorIndex)
@@ -94,7 +93,6 @@ namespace TetrisDb
 
         private void NextFigureHandler()
         {
-            Game.CycleTetramino();
             var bitmap = new Bitmap(4 * BlockSize, 4 * BlockSize);
             var g = Graphics.FromImage(bitmap);
             g.Clear(SystemColors.Control);
@@ -111,78 +109,32 @@ namespace TetrisDb
             nextFigurePicture.Image = bitmap;
         }
 
-        private void TimerHandler(TetrisGame.GameState state)
-        {
-            switch (state)
-            {
-                case TetrisGame.GameState.Paused:
-                    gameTimer.Stop();
-                    break;
-                case TetrisGame.GameState.Empty:
-                    break;
-                case TetrisGame.GameState.StartNew:
-                    Game.State = TetrisGame.GameState.Playing;
-                    gameTimer.Start();
-                    break;
-                case TetrisGame.GameState.Playing:
-                    gameTimer.Start();
-                    break;
-                case TetrisGame.GameState.Finished:
-                    gameTimer.Stop();
-                    break;
-            }
-        }
-
-        private void PauseButtonHandler(TetrisGame.GameState state)
-        {
-            switch (state)
-            {
-                case TetrisGame.GameState.Empty:
-                    pauseButton.Enabled = false;
-                    break;
-                case TetrisGame.GameState.StartNew:
-                    pauseButton.Enabled = true;
-                    pauseButton.Text = "Пауза";
-                    break;
-                case TetrisGame.GameState.Playing:
-                    pauseButton.Enabled = true;
-                    pauseButton.Text = "Пауза";
-                    break;
-                case TetrisGame.GameState.Paused:
-                    pauseButton.Enabled = true;
-                    pauseButton.Text = "Продолжить";
-                    break;
-                case TetrisGame.GameState.Finished:
-                    pauseButton.Enabled = false;
-                    pauseButton.Text = "Пауза";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
-            }
-        }
-
         private void startButton_Click(object sender, EventArgs e)
         {
-            Game.State = TetrisGame.GameState.StartNew;
+            Start();
             Redraw();
         }
 
         private void pauseButton_Click(object sender, EventArgs e)
         {
-            switch (Game.State)
+            switch (State)
             {
-                case TetrisGame.GameState.Playing:
-                    Game.State = TetrisGame.GameState.Paused;
+                case GameState.Playing:
+                    State = GameState.Paused;
+                    pauseButton.Text = "Продолжить";
+                    gameTimer.Stop();
                     break;
-                case TetrisGame.GameState.Paused:
-                    Game.State = TetrisGame.GameState.Playing;
+                case GameState.Paused:
+                    State = GameState.Playing;
+                    pauseButton.Text = "Пауза";
+                    gameTimer.Start();
                     break;
             }
         }
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
-            Game.OnGameTick();
+            Game.NextTick();
             Redraw();
         }
 
@@ -224,10 +176,10 @@ namespace TetrisDb
                     DrawBlock(g, block, fieldX, fieldY, BlockSize);
                 }
 
-            if (Game.CurrentTetramino != null)
+            if (Game.CurrentTetramino != null && (State == GameState.Paused || State == GameState.Playing))
             {
                 // Draw shadow
-                var shadow = Game.GetShadow(Game.CurrentTetramino);
+                var shadow = Game.DropDown(Game.CurrentTetramino);
                 DrawTetramino(g, shadow, TetrisGame.ShadowColorIndex);
 
                 // Draw moving peace
@@ -253,7 +205,7 @@ namespace TetrisDb
                     break;
             }
 
-            if (Game.State != TetrisGame.GameState.Playing)
+            if (State != GameState.Playing)
                 return;
             switch (e.KeyCode)
             {
@@ -270,7 +222,7 @@ namespace TetrisDb
                     Game.MoveCurrentTetramino(TetrisGame.Direction.Rotate);
                     break;
                 case Keys.Space:
-                    Game.MoveCurrentTetramino(TetrisGame.Direction.DownFast);
+                    Game.DropDownCurrentTetramino();
                     gameTimer.Stop();
                     gameTimer_Tick(sender, e);
                     gameTimer.Start();
@@ -285,7 +237,6 @@ namespace TetrisDb
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            Focus();
             Redraw();
         }
 
@@ -297,7 +248,7 @@ namespace TetrisDb
 
         private void MainForm_Leave(object sender, EventArgs e)
         {
-            if (Game.State == TetrisGame.GameState.Playing)
+            if (State == GameState.Playing)
             {
                 pauseButton_Click(sender, e);
             }
