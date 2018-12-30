@@ -134,6 +134,7 @@ namespace TetrisDb
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
+            if (State != GameState.Playing) return;
             Game.NextTick();
             Redraw();
         }

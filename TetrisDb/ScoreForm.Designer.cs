@@ -116,7 +116,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "ScoreForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Stats";
+            this.Text = "Таблица результатов";
             this.Load += new System.EventHandler(this.StatsForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StatsForm_KeyDown);
             this.flowLayoutPanel1.ResumeLayout(false);

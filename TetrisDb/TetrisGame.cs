@@ -93,8 +93,8 @@ namespace TetrisDb
         {
             Field = new int[Height + 4, Width];
             for (var i = 0; i < Height + 4; i++)
-            for (var j = 0; j < Width; j++)
-                Field[i, j] = -1;
+                for (var j = 0; j < Width; j++)
+                    Field[i, j] = -1;
             CycleTetramino();
             ResetScore();
         }
@@ -116,9 +116,9 @@ namespace TetrisDb
 
             // Collapsing lines
             for (var line = lineToCollapse.Count - 1; line >= 0; line--)
-            for (var i = lineToCollapse[line]; i < Height; i++)
-            for (var j = 0; j < Width; j++)
-                Field[i, j] = Field[i + 1, j];
+                for (var i = lineToCollapse[line]; i < Height; i++)
+                    for (var j = 0; j < Width; j++)
+                        Field[i, j] = Field[i + 1, j];
 
             UpdateScore(lineToCollapse.Count);
 
@@ -145,7 +145,7 @@ namespace TetrisDb
         private Tetramino Move(Tetramino tetramino, Direction dir)
         {
             if (tetramino == null) return null;
-            var moved = (Tetramino) tetramino.Clone();
+            var moved = (Tetramino)tetramino.Clone();
             switch (dir)
             {
                 case Direction.None:
@@ -236,7 +236,7 @@ namespace TetrisDb
 
         private Tetramino GenerateTetramino()
         {
-            return (Tetramino) _tetraminoList[new Random().Next() % _tetraminoList.Count].Clone();
+            return (Tetramino)_tetraminoList[new Random().Next() % _tetraminoList.Count].Clone();
         }
 
         public void NextTick()
@@ -247,6 +247,5 @@ namespace TetrisDb
             else
                 CurrentTetramino = tetramino;
         }
-        
     }
 }

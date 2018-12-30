@@ -14,8 +14,5 @@ namespace TetrisDb
         public int Points { get; set; }
 
         public virtual Player Player { get; set; }
-
- 
     }
-
 }
